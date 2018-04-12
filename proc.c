@@ -498,26 +498,12 @@ static char *states[] = {
 // Print a process listing to console.  For debugging.
 // Runs when user types ^P on console.
 // No lock to avoid wedging a stuck machine further.
-void
-procdump(void)
-{
-  int i;
-  struct proc *p;
-  char *state;
-  uint pc[10];
 
 #ifdef CS333_P1
-     cprintf("PID\tState\tName\tElapsed\t PCs\n");
-#endif
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->state == UNUSED)
-      continue;
-    if(p->state >= 0 && p->state < NELEM(states) && states[p->state])
-      state = states[p->state];
-    else
-      state = "???";
+static void
+procdumpP1(struct proc *p, char *state)
+{
     cprintf("%d\t%s\t%s\t", p->pid, state, p->name);
-#ifdef CS333_P1
     int time = (ticks - p->start_ticks);
     int decim = time % 1000;
     time /= 1000;
@@ -527,16 +513,57 @@ procdump(void)
       cprintf("%d.0%d\t", time, decim);
     else
       cprintf("%d.%d\t", time, decim);
+}
 #endif
-    if(p->state == SLEEPING){
-      getcallerpcs((uint*)p->context->ebp+2, pc);
-      for(i=0; i<10 && pc[i] != 0; i++)
-        cprintf(" %p", pc[i]);
-    }
+
+//---------------------------Marks Code------------------------------
+void
+procdump(void)
+{
+  int i;
+  struct proc *p;
+  char *state;
+  uint pc[10];
+
+#if defined(CS333_P3P4)
+#define HEADER "\nPID\tName         UID\tGID\tPPID\tPrio\tElapsed\tCPU\tState\tSize\t PCs\n"
+#elif defined(CS333_P2)
+#define HEADER "\nPID\tName         UID\tGID\tPPID\tElapsed\tCPU\tState\tSize\t PCs\n"
+#elif defined(CS333_P1)
+#define HEADER "PID\tState\tName\tElapsed\t PCs\n"
+#else
+#define HEADER ""
+#endif
+
+  cprintf(HEADER);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->state == UNUSED)
+      continue;
+    if(p->state >= 0 && p->state < NELEM(states) && states[p->state])
+      state = states[p->state];
+    else
+      state = "???";
+
+#if defined(CS333_P3P4)
+  procdumpP3P4(p, state);
+#elif defined(CS333_P2)
+  procdumpP2(p, state);
+#elif defined(CS333_P1)
+  procdumpP1(p, state);
+#else
+  cprintf("%d %s %s", p->pid, state, p->name);
+#endif
+
+  if(p->state == SLEEPING){
+    getcallerpcs((uint*)p->context->ebp+2, pc);
+  for(i=0; i<10 && pc[i] != 0; i++)
+    cprintf(" %p", pc[i]);
+  }
     cprintf("\n");
   }
 }
 
+//-------------------------------------------------------------------
 #ifdef CS333_P3P4
 static int
 stateListAdd(struct proc** head, struct proc** tail, struct proc* p)

@@ -68,6 +68,9 @@ struct proc {
 #ifdef CS333_P1
   uint start_ticks;
 #endif
+
+#ifdef CS333_P2
+#endif
 };
 
 // Process memory is laid out contiguously, low addresses first:
