@@ -34,7 +34,6 @@ pinit(void)
   initlock(&ptable.lock, "ptable");
 }
 
-//PAGEBREAK: 32
 // Look in the process table for an UNUSED proc.
 // If found, change state to EMBRYO and initialize
 // state required to run in the kernel.
@@ -78,10 +77,13 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
+#ifdef CS333_P1
+  p->start_ticks = ticks;
+#endif
+
   return p;
 }
 
-//PAGEBREAK: 32
 // Set up first user process.
 void
 userinit(void)
@@ -279,7 +281,6 @@ wait(void)
 }
 #endif
 
-//PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
 // Scheduler never returns.  It loops, doing:
@@ -424,7 +425,6 @@ sleep(void *chan, struct spinlock *lk)
   }
 }
 
-//PAGEBREAK!
 #ifndef CS333_P3P4
 // Wake up all processes sleeping on chan.
 // The ptable lock must be held.
@@ -495,7 +495,6 @@ static char *states[] = {
   [ZOMBIE]    "zombie"
 };
 
-//PAGEBREAK: 36
 // Print a process listing to console.  For debugging.
 // Runs when user types ^P on console.
 // No lock to avoid wedging a stuck machine further.
@@ -507,6 +506,9 @@ procdump(void)
   char *state;
   uint pc[10];
 
+#ifdef CS333_P1
+     cprintf("PID\tState\tName\tElapsed\t PCs\n");
+#endif
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->state == UNUSED)
       continue;
@@ -514,7 +516,18 @@ procdump(void)
       state = states[p->state];
     else
       state = "???";
-    cprintf("%d %s %s", p->pid, state, p->name);
+    cprintf("%d\t%s\t%s\t", p->pid, state, p->name);
+#ifdef CS333_P1
+    int time = (ticks - p->start_ticks);
+    int decim = time % 1000;
+    time /= 1000;
+    if(decim < 10)
+      cprintf("%d.00%d\t", time, decim);
+    else if(decim < 100 && decim >= 10)
+      cprintf("%d.0%d\t", time, decim);
+    else
+      cprintf("%d.%d\t", time, decim);
+#endif
     if(p->state == SLEEPING){
       getcallerpcs((uint*)p->context->ebp+2, pc);
       for(i=0; i<10 && pc[i] != 0; i++)
@@ -523,7 +536,6 @@ procdump(void)
     cprintf("\n");
   }
 }
-
 
 #ifdef CS333_P3P4
 static int

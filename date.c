@@ -39,7 +39,6 @@ main(int argc, char *argv[])
   printf(1, "%d:", r.minute);
   if (r.second < 10) printf(1, "0");
   printf(1, "%d UTC %d\n", r.second, r.year);
-
   exit();
 }
 #endif
