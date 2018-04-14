@@ -70,6 +70,13 @@ struct proc {
 #endif
 
 #ifdef CS333_P2
+/*  uint getuid(void);           // UID of the current process
+  uint getgiti(void);          // GID of the current process
+  uint getppid(void);          // process ID of the parent process
+
+  int setuid(uint);            // set UID
+  int setgit(uint)             // set GID
+*/
 #endif
 };
 

@@ -516,6 +516,14 @@ procdumpP1(struct proc *p, char *state)
 }
 #endif
 
+#ifdef CS333_P2
+static void
+procdumpP2(struct proc *p, char *state)
+{
+
+}
+#endif
+
 //---------------------------Marks Code------------------------------
 void
 procdump(void)
@@ -547,6 +555,7 @@ procdump(void)
 #if defined(CS333_P3P4)
   procdumpP3P4(p, state);
 #elif defined(CS333_P2)
+  procdumpP1(p, state);
   procdumpP2(p, state);
 #elif defined(CS333_P1)
   procdumpP1(p, state);
