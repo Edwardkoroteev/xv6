@@ -81,6 +81,10 @@ found:
   p->start_ticks = ticks;
 #endif
 
+#ifdef CS333_P2
+  p->cpu_ticks_total = 0;
+  p->cpu_ticks_in = 0;
+#endif
   return p;
 }
 
@@ -110,6 +114,10 @@ userinit(void)
   p->cwd = namei("/");
 
   p->state = RUNNABLE;
+#ifdef CS333_P2
+  p->uid = UID;
+  p->gid = GID;
+#endif
 }
 
 // Grow current process's memory by n bytes.
@@ -152,6 +160,10 @@ fork(void)
     np->state = UNUSED;
     return -1;
   }
+#ifdef CS333_p2
+  np->uid = proc->uid;
+  np->gid = proc->gid;
+#endif
   np->sz = proc->sz;
   np->parent = proc;
   *np->tf = *proc->tf;
@@ -310,6 +322,9 @@ scheduler(void)
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
+#ifdef CS333_P2
+      p->cpu_ticks_in = ticks;
+#endif
       idle = 0;  // not idle this timeslice
       proc = p;
       switchuvm(p);
@@ -356,6 +371,9 @@ sched(void)
   intena = cpu->intena;
   swtch(&proc->context, cpu->scheduler);
   cpu->intena = intena;
+#ifdef CS333_P2
+  proc->cpu_ticks_total += (ticks-proc->cpu_ticks_in);
+#endif
 }
 
 // Give up the CPU for one scheduling round.

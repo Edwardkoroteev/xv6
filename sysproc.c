@@ -106,3 +106,102 @@ sys_date(void)
 	return 0;
 }
 #endif
+
+#ifdef CS333_P2
+int
+sys_getuid(void)
+{
+  return proc->uid;
+}
+
+int
+sys_getgid(void)
+{
+  return proc->gid;
+}
+
+int
+sys_getppid(void)
+{
+  return proc->parent->pid;
+}
+
+int
+sys_setuid(void)
+{
+  int uid;
+  if(argint(0, &uid) < 0)
+    return -1;
+
+  if((proc->uid < 0) || (proc->uid > 32767))
+  {
+    return -1;
+  }
+  else
+  {
+    proc->uid = uid;
+  }
+
+  return 0;
+}
+
+int
+sys_setgid(void)
+{
+  int gid;
+  if(argint(0, &gid) < 0)
+    return -1;
+
+  if((proc->gid < 0) || (proc->gid > 32767))
+  {
+    return -1;
+  }
+  else
+  {
+    proc->gid = gid;
+  }
+  return 0;
+}
+
+int
+sys_getprocs(void)
+{
+  int max;
+  struct uproc *table;
+
+  if(argint(0, *max) < 0)
+    return -1;
+
+  if(argptr(1, &table))
+    return -1;
+
+  for(int i = 0; i < MAX; i++)
+  {
+    table->pid = proc->pid;
+    table->uid = proc->uid;
+    table->gid = proc->gid;
+    table->ppid = proc->parent->pid;
+    table->elapsed_time = ticks-proc->start_ticks;
+    table->cpu_ticks_total = proc->cpu_ticks_total;
+    table->state = proc->state;
+    table->size = max;
+    table->name = name;
+  }
+}
+#endif
+
+/*
+#ifdef CS333_P2
+struct uproc {
+  uint pid;
+  uint uid;
+  uint gid;
+  uint ppid;
+  uint elapsed_time;
+  uint cpu_ticks_total;
+  char *state;
+  uint size; 
+  char *name;
+};
+#endif
+*/
