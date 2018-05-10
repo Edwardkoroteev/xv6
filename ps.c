@@ -11,6 +11,13 @@ main(int argc, char * argv[])
     max = atoi(argv[1]);
 
   struct uproc * table = malloc(sizeof(*table)*max);
+
+  if(table == 0)
+  {
+    printf(1, "Unable to initialize table in ps.c\n");
+    exit();
+  }
+
   int process = getprocs(max, table);
   int time;
   int decim;
@@ -26,11 +33,13 @@ main(int argc, char * argv[])
 
   for(int i = 0; i < process; i++)
   {
-    printf(1, "%d\t", table[i].pid);
-    printf(1, "%s\t", table[i].name);
-    printf(1, "%d\t", table[i].uid);
-    printf(1, "%d\t", table[i].gid);
-    printf(1, "%d\t", table[i].ppid);
+    printf(1, "%d\t%s\t%d\t%d\t%d\t", 
+      table[i].pid, 
+      table[i].name, 
+      table[i].uid, 
+      table[i].gid, 
+      table[i].ppid);
+
     time = table[i].elapsed_ticks;
     decim = time % 1000;
     time /= 1000;

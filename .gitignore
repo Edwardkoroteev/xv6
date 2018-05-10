@@ -1,3 +1,19 @@
+# User ignores
+*.asm
+*.sym
+*.img
+*.S
+_*
+.gdbinit
+bootblock
+dist
+dist-test
+entryother
+initcode
+kernel
+mkfs
+xv6-pdx.tar.gz
+
 # Created by https://www.gitignore.io/api/c
 
 ### C ###
