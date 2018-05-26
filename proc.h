@@ -78,6 +78,10 @@ struct proc {
 
 #ifdef CS333_P3P4
   struct proc *next;
+
+  //Below is Proj4
+  uint priority;
+  int budget;
 #endif
 
 };

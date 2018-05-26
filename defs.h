@@ -125,6 +125,7 @@ int             getprocs(uint max, struct uproc*);
 #endif
 #ifdef CS333_P3P4
 void            infodump(char input);
+int             setpriority(int pid, int priority);
 #endif
 
 // swtch.S

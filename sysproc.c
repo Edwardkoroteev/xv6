@@ -181,3 +181,26 @@ sys_getprocs(void)
   return getprocs(max, table);
 }
 #endif
+
+#ifdef CS333_P3P4
+int
+sys_setpriority(void)
+{
+  int pid;
+  int prio;
+
+  if(argint(0, &pid) < 0)
+    return -1;
+
+  if(argint(1, &prio) < 0)
+    return -1;
+
+  if(pid < 1)
+    return -1;
+
+  if(prio < 0 || prio > MAXPRIO+1)
+    return -1;
+
+  return setpriority(pid, prio);
+}
+#endif

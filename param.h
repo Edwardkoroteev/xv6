@@ -14,3 +14,6 @@
 #define FSSIZE       2000  // size of file system in blocks  // CS333 requires a larger FS.
 #define UID           0  // default UID process
 #define GID           0  // default GID process
+#define MAXPRIO       0 // max priority 
+#define TICKS_TO_PROMOTE  1000  // Ticks to promote process
+#define BUDGET        100 // Budget

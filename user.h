@@ -40,7 +40,9 @@ int setgid(uint);     // set GID
 
 int getprocs(uint max, struct uproc*);  //get procs
 #endif
-
+#ifdef CS333_P3P4
+int setpriority(int pid, int priority); //set priority of process
+#endif
 
 // ulib.c
 int stat(char*, struct stat*);

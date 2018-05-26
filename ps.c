@@ -29,7 +29,14 @@ main(int argc, char * argv[])
     printf(1, "Error\n");
   }
 
+  
+#ifdef CS333_P3P4
+  printf(1, "PID\tName\tUID\tGID\tPPID\tPrio\tElapsed\tCPU\tState\tSize\n");
+#else
   printf(1, "PID\tName\tUID\tGID\tPPID\tElapsed\tCPU\tState\tSize\n");
+#endif
+
+
 
   for(int i = 0; i < process; i++)
   {
@@ -39,6 +46,9 @@ main(int argc, char * argv[])
       table[i].uid, 
       table[i].gid, 
       table[i].ppid);
+#ifdef CS333_P3P4
+    printf(1, "%d\t", table[i].prio);
+#endif
 
     time = table[i].elapsed_ticks;
     decim = time % 1000;
