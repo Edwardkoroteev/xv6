@@ -1343,6 +1343,7 @@ infodump(char input)
 {
   struct proc *p;
 
+  acquire(&ptable.lock);
   if(input == 'r')
   {
     for(int i = 0; i < MAXPRIO+1; i++)
@@ -1414,6 +1415,7 @@ infodump(char input)
         cprintf("(PPID%d, PPID%d)", p->pid, p->parent ? p->parent->pid : p->pid);
     }
   }
+  release(&ptable.lock);
 }
 
 //Assignment 4 below

@@ -43,7 +43,11 @@ int getprocs(uint max, struct uproc*);  //get procs
 #ifdef CS333_P3P4
 int setpriority(int pid, int priority); //set priority of process
 #endif
-
+#ifdef CS333_P5
+int chmod(char* pathname, int mode);
+int chown(char* pathname, int owner);
+int chgrp(char* pathname, int group);
+#endif
 // ulib.c
 int stat(char*, struct stat*);
 char* strcpy(char*, char*);
@@ -57,3 +61,6 @@ void* memset(void*, int, uint);
 void* malloc(uint);
 void free(void*);
 int atoi(const char*);
+#ifdef CS333_P5
+int atoo(const char *s);
+#endif

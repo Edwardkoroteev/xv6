@@ -185,6 +185,11 @@ ialloc(uint dev, short type)
     if(dip->type == 0){  // a free inode
       memset(dip, 0, sizeof(*dip));
       dip->type = type;
+#ifdef CS333_P5
+      dip->uid = UID;
+      dip->gid = GID;
+      dip->mode.asInt = DEFAULT_MODE;
+#endif
       log_write(bp);   // mark it allocated on the disk
       brelse(bp);
       return iget(dev, inum);
@@ -207,6 +212,11 @@ iupdate(struct inode *ip)
   dip->major = ip->major;
   dip->minor = ip->minor;
   dip->nlink = ip->nlink;
+#ifdef CS333_P5
+  dip->uid = ip->uid;
+  dip->gid = ip->gid;
+  dip->mode.asInt = ip->mode.asInt;
+#endif
   dip->size = ip->size;
   memmove(dip->addrs, ip->addrs, sizeof(ip->addrs));
   log_write(bp);
@@ -284,6 +294,11 @@ ilock(struct inode *ip)
     ip->major = dip->major;
     ip->minor = dip->minor;
     ip->nlink = dip->nlink;
+#ifdef CS333_P5
+    ip->uid = dip->uid;
+    ip->gid = dip->gid;
+    ip->mode.asInt = dip->mode.asInt;
+#endif
     ip->size = dip->size;
     memmove(ip->addrs, dip->addrs, sizeof(ip->addrs));
     brelse(bp);
@@ -425,6 +440,11 @@ stati(struct inode *ip, struct stat *st)
   st->type = ip->type;
   st->nlink = ip->nlink;
   st->size = ip->size;
+#ifdef CS333_P5
+  st->uid = ip->uid;
+  st->gid = ip->gid;
+  st->mode.asInt = ip->mode.asInt;
+#endif
 }
 
 // Read data from inode.
@@ -643,3 +663,65 @@ nameiparent(char *path, char *name)
 {
   return namex(path, 1, name);
 }
+
+#ifdef CS333_P5
+int
+chmod(char* pathname, int mode)
+{
+  begin_op();
+  struct inode* node;
+  node = namei(pathname);
+  if(node == 0)
+  {
+    cprintf("Wrong pathname\n");
+    return -1;
+  }
+  ilock(node);
+  node->mode.asInt = mode;
+  iupdate(node);
+  iunlock(node);
+  iput(node);
+  end_op();
+  return 0;
+}
+
+int
+chown(char* pathname, int owner)
+{
+  begin_op();
+  struct inode* node;
+  node = namei(pathname);
+  if(node == 0)
+  {
+    cprintf("Wrong pathname\n");
+    return -1;
+  }
+  ilock(node);
+  node->uid = owner;
+  iupdate(node);
+  iunlock(node);
+  iput(node);
+  end_op();
+  return 0;
+}
+
+int
+chgrp(char* pathname, int group)
+{
+  begin_op();
+  struct inode* node;
+  node = namei(pathname);
+  if(node == 0)
+  {
+    cprintf("Wrong pathname\n");
+    return -1;
+  }
+  ilock(node);
+  node->gid = group;
+  iupdate(node);
+  iunlock(node);
+  iput(node);
+  end_op();
+  return 0;
+}
+#endif

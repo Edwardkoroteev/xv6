@@ -14,6 +14,11 @@
 #define FSSIZE       2000  // size of file system in blocks  // CS333 requires a larger FS.
 #define UID           0  // default UID process
 #define GID           0  // default GID process
-#define MAXPRIO       0 // max priority 
+#define MAXPRIO       4 // max priority 
 #define TICKS_TO_PROMOTE  1000  // Ticks to promote process
 #define BUDGET        100 // Budget
+
+// DEFAULT is the default value for both the first process and files
+// created by mkfs when the file system is created
+#define DEFAULT_MODE   00755
+
